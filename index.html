@@ -83,32 +83,33 @@ document.getElementById('feedbackForm').addEventListener('submit', async functio
     };
 
     try {
-	console.log('hi1')
         const response = await fetch(GOOGLE_SHEETS_WEB_APP_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(feedbackData),
-	    mode: 'no-cors'
+            body: JSON.stringify(feedbackData)
         });
-	console.log('hi2')
+
+        // Log the raw response for debugging
+        console.log('Response status:', response.status);
+
+        // Process response
         if (response.ok) {
-	    console.log('hi3')
             const result = await response.json();
             alert(result.message || 'Feedback submitted successfully!');
             document.getElementById('feedbackForm').reset();
         } else {
-	    console.log('hi4')
-            alert('Failed to submit feedback.');
+            const errorText = await response.text(); // Fetch detailed error text
+            console.error('Error response:', errorText);
+            alert('Failed to submit feedback. Server returned an error.');
         }
     } catch (error) {
-	console.log('hi5')
         console.error('Error submitting feedback:', error);
         alert('An error occurred while submitting feedback.');
     }
-    console.log('hi6')
 });
+
 
     </script>
 </body>
