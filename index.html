@@ -60,51 +60,56 @@
     </form>
 
     <script>
-        const PROXY_URL = 'https://cors-anywhere.herokuapp.com/';
-        const GOOGLE_SHEETS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbx24BbAm4lenHd10lTcBWK__KBfQomZaU7ykDraBn5oBuq26PuyDQh92348CsgN8gnizA/exec'; // Replace with your Web App URL
+const GOOGLE_SHEETS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwQopXKBrZU-qN33M0cSeFrntkpEpsf-aETQgGxH01gSjnexZmspOJ7dy-6cOZP1UsrgA/exec';
 
-        // Submit feedback to Google Sheets
-        document.getElementById('feedbackForm').addEventListener('submit', async function (e) {
-            e.preventDefault();
+document.getElementById('feedbackForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
 
-            const name = document.getElementById('name').value;
-            const product = document.getElementById('product').value;
-            const rating = document.querySelector('input[name="rating"]:checked')?.value;
-            const feedback = document.getElementById('feedback').value;
+    const name = document.getElementById('name').value;
+    const product = document.getElementById('product').value;
+    const rating = document.querySelector('input[name="rating"]:checked')?.value;
+    const feedback = document.getElementById('feedback').value;
 
-            if (!name || !product || !rating || !feedback) {
-                alert('All fields are required!');
-                return;
-            }
+    if (!name || !product || !rating || !feedback) {
+        alert('All fields are required!');
+        return;
+    }
 
-            const feedbackData = {
-                name,
-                product,
-                rating,
-                feedback
-            };
+    const feedbackData = {
+        name,
+        product,
+        rating,
+        feedback
+    };
 
-            try {
-                const response = await fetch(GOOGLE_SHEETS_WEB_APP_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(feedbackData)
-                });
-
-                if (response.ok) {
-                    const result = await response.json();
-                    alert(result.message || 'Feedback submitted successfully!');
-                    document.getElementById('feedbackForm').reset();
-                } else {
-                    alert('Failed to submit feedback.');
-                }
-            } catch (error) {
-                console.error('Error submitting feedback:', error);
-                alert('An error occurred while submitting feedback.');
-            }
+    try {
+	console.log('hi1')
+        const response = await fetch(GOOGLE_SHEETS_WEB_APP_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(feedbackData),
+	    mode: 'no-cors'
         });
+	console.log('hi2')
+        if (response.ok) {
+	    console.log('hi3')
+            const result = await response.json();
+            alert(result.message || 'Feedback submitted successfully!');
+            document.getElementById('feedbackForm').reset();
+        } else {
+	    console.log('hi4')
+            alert('Failed to submit feedback.');
+        }
+    } catch (error) {
+	console.log('hi5')
+        console.error('Error submitting feedback:', error);
+        alert('An error occurred while submitting feedback.');
+    }
+    console.log('hi6')
+});
+
     </script>
 </body>
 </html>
