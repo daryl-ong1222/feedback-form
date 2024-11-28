@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        textarea {
+            width: 100%;
+        }
+        button {
+            cursor: pointer;
+            padding: 10px 15px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Feedback Form</h1>
+    <form id="feedbackForm">
+        <label for="name">Select Name:</label><br>
+        <select id="name" name="name" required>
+            <option value="">--Select Name--</option>
+            <option value="John Doe">John Doe</option>
+            <option value="Jane Smith">Jane Smith</option>
+            <option value="Alice Johnson">Alice Johnson</option>
+            <option value="Bob Brown">Bob Brown</option>
+        </select><br><br>
+
+        <label for="product">Select Product:</label><br>
+        <select id="product" name="product" required>
+            <option value="">--Select Product--</option>
+            <option value="Avia LX">Avia LX</option>
+            <option value="Legacy Matrix">Legacy Matrix</option>
+            <option value="Apex Ultra">Apex Ultra</option>
+        </select><br><br>
+
+        <label>Rate Your Experience:</label><br>
+        <input type="radio" id="poor" name="rating" value="Poor" required>
+        <label for="poor">Poor</label><br>
+        <input type="radio" id="average" name="rating" value="Average">
+        <label for="average">Average</label><br>
+        <input type="radio" id="good" name="rating" value="Good">
+        <label for="good">Good</label><br><br>
+
+        <label for="feedback">Feedback:</label><br>
+        <textarea id="feedback" name="feedback" rows="4" required></textarea><br><br>
+
+        <button type="submit">Submit Feedback</button>
+    </form>
+
+    <script>
+        const GOOGLE_SHEETS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbx24BbAm4lenHd10lTcBWK__KBfQomZaU7ykDraBn5oBuq26PuyDQh92348CsgN8gnizA/exec'; // Replace with your Web App URL
+
+        // Submit feedback to Google Sheets
+        document.getElementById('feedbackForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const product = document.getElementById('product').value;
+            const rating = document.querySelector('input[name="rating"]:checked')?.value;
+            const feedback = document.getElementById('feedback').value;
+
+            if (!name || !product || !rating || !feedback) {
+                alert('All fields are required!');
+                return;
+            }
+
+            const feedbackData = {
+                name,
+                product,
+                rating,
+                feedback
+            };
+
+            try {
+                const response = await fetch(GOOGLE_SHEETS_WEB_APP_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(feedbackData)
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    alert(result.message || 'Feedback submitted successfully!');
+                    document.getElementById('feedbackForm').reset();
+                } else {
+                    alert('Failed to submit feedback.');
+                }
+            } catch (error) {
+                console.error('Error submitting feedback:', error);
+                alert('An error occurred while submitting feedback.');
+            }
+        });
+    </script>
+</body>
+</html>

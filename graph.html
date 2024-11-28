@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Overview</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        canvas {
+            max-width: 600px;
+            margin: 20px auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        button {
+            cursor: pointer;
+            padding: 10px 15px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Feedback Overview</h1>
+
+    <canvas id="feedbackChart"></canvas>
+
+    <h2>Detailed Feedback Data</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Product</th>
+                <th>Rating</th>
+                <th>Feedback</th>
+            </tr>
+        </thead>
+        <tbody id="feedbackTableBody">
+            <!-- Feedback data will be populated here -->
+        </tbody>
+    </table>
+
+    <button onclick="window.location.href='feedback.html'">Go Back to Form</button>
+
+    <script>
+        // Load feedback data from localStorage
+        const feedbackList = JSON.parse(localStorage.getItem('feedbackList')) || [];
+
+        // Process data for the chart
+        const ratingsCount = { Poor: 0, Average: 0, Good: 0 };
+
+        feedbackList.forEach(feedback => {
+            if (ratingsCount[feedback.rating] !== undefined) {
+                ratingsCount[feedback.rating]++;
+            }
+        });
+
+        // Create the bar chart
+        const ctx = document.getElementById('feedbackChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Poor', 'Average', 'Good'],
+                datasets: [{
+                    label: 'Number of Ratings',
+                    data: [ratingsCount.Poor, ratingsCount.Average, ratingsCount.Good],
+                    backgroundColor: ['#f44336', '#ff9800', '#4caf50']
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'Feedback Ratings'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Populate the feedback table
+        const feedbackTableBody = document.getElementById('feedbackTableBody');
+        feedbackList.forEach(feedback => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${feedback.name}</td>
+                <td>${feedback.product}</td>
+                <td>${feedback.rating}</td>
+                <td>${feedback.feedback}</td>
+            `;
+            feedbackTableBody.appendChild(row);
+        });
+    </script>
+</body>
+</html>
